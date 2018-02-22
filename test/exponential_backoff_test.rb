@@ -24,6 +24,14 @@ describe "ExponentialBackOffTest" do
     
     end
 
+    it 'Should raise ArgumentError if url is blank' do
+      
+      @exponential_backoff.url = ""
+
+      proc { @exponential_backoff.start() }.must_raise ArgumentError
+    
+    end
+
     it 'Should raise ArgumentError if url is in a invalid format' do
       
       @exponential_backoff.url = "invlaidurl..com"
