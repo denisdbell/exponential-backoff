@@ -7,22 +7,24 @@ require 'exponential_backoff.rb'
 
 describe "ExponentialBackOffTest" do
 
+  before do
+    set_default_backoff_object
+  end
+
+  def set_default_backoff_object
+
+    url = "https://httpbin.org/delay/3"
+    max_retries = 4
+    initial_delay = 1
+    delay_multiplier = 2
+
+    @exponential_backoff =  ExponentialBackOff.new(url,max_retries, initial_delay, delay_multiplier);
+  
+  end
+
   describe "verify_input" do
 
-    before do
-      set_default_backoff_object
-    end
-
-    def set_default_backoff_object
-
-      url = "https://httpbin.org/delay/3"
-      max_retries = 4
-      initial_delay = 1
-      delay_multiplier = 2
-
-      @exponential_backoff =  ExponentialBackOff.new(url,max_retries, initial_delay, delay_multiplier);
     
-    end
 
     it 'Should raise ArgumentError if url is blank' do
       
@@ -76,10 +78,6 @@ describe "ExponentialBackOffTest" do
 
   describe "request_url_with_timeout" do
 
-    before do
-      @exponential_backoff = ExponentialBackOff.new("https://httpbin.org/delay/3",4,1,2);
-    end
-
     it 'Should raise Timeout::Error error if request is not completed in the time specified' do
       
       url = "https://httpbin.org/delay/3"
@@ -100,6 +98,59 @@ describe "ExponentialBackOffTest" do
 
     end
     
+  end
+
+  describe "generate_delay" do
+
+    it 'Should raise ArgumentError if current_delay is negative' do
+      
+      current_delay = -1
+      delay_multiplier = 2
+
+      proc {  @exponential_backoff.generate_delay(current_delay,delay_multiplier) }.must_raise ArgumentError
+
+    end
+
+    it 'Should raise ArgumentError if current_delay is not numeric' do
+      
+      current_delay = "a"
+      delay_multiplier = 2
+
+      proc {  @exponential_backoff.generate_delay(current_delay,delay_multiplier) }.must_raise ArgumentError
+
+    end
+
+    it 'Should raise ArgumentError if delay_multiplier is negative' do
+      
+      current_delay = 1
+      delay_multiplier = -1
+
+      proc {  @exponential_backoff.generate_delay(current_delay,delay_multiplier) }.must_raise ArgumentError
+
+    end
+
+    it 'Should raise ArgumentError if delay_multiplier is not numeric' do
+      
+      current_delay = 1
+      delay_multiplier = "a"
+
+      proc {  @exponential_backoff.generate_delay(current_delay,delay_multiplier) }.must_raise ArgumentError
+
+    end
+
+
+    it 'Should return the product of current_delay and  delay_multiplier' do
+      
+      current_delay = 1
+      delay_multiplier = 3
+
+      product = current_delay * delay_multiplier
+
+      @exponential_backoff.generate_delay(current_delay,delay_multiplier).must_equal product
+
+    end
+
+
   end
 
 end
