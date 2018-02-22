@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'timeout'
+require 'uri'
 
 class ExponentialBackOff
 
@@ -44,6 +45,8 @@ class ExponentialBackOff
 
   def verify_input
 
+    raise ArgumentError, 'Value of url is not valid. Format should be like the folllowing http://www.example.com' unless @@url =~ URI::regexp  
+
     raise ArgumentError, 'Value of number of retries cannot be negative. Valid values are postive integers between 0 to N' unless @@max_retries >= 0  
 		
     raise ArgumentError, 'Value of initial delay cannot be negative. Valid values are positive  integers between 1 to N' unless @@initial_delay >= 0
@@ -78,6 +81,15 @@ class ExponentialBackOff
   end
 
   #Getters and Setters
+  def url=(url)
+    @@url = url
+  end
+
+  def response
+    @@response
+  end
+
+
   def response=(response)
     @@response = response
   end
