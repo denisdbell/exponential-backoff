@@ -8,42 +8,38 @@ require 'exponential_backoff.rb'
 describe "ExponentialBackOffTest" do
 
   before do
-    @exponential_backoff = ExponentialBackOff.new
+    @exponential_backoff = ExponentialBackOff.new("https://httpbin.org/delay/3",4,1,2);
   end
 
-  it 'Should raise ArgumentError if number_of_retries is negative' do
+  it 'Should raise ArgumentError if max_retries is negative' do
     
-    number_of_retries = -1
-		initial_delay = 3
+    @exponential_backoff.max_retries = -1
 
-    proc {  @exponential_backoff.start(number_of_retries,initial_delay) }.must_raise ArgumentError
+    proc { @exponential_backoff.start() }.must_raise ArgumentError
   
   end
 
   it 'Should raise ArgumentError if initial_delay is negative' do
     
-    number_of_retries = 3
-		initial_delay = -1
-
-    proc {  @exponential_backoff.start(number_of_retries,initial_delay) }.must_raise ArgumentError
+    @exponential_backoff.initial_delay = -1
+    
+    proc { @exponential_backoff.start() }.must_raise ArgumentError
   
   end
 
-  it 'Should raise ArgumentError if number_of_retries_is not numeric' do
+  it 'Should raise ArgumentError if max_retries not numeric' do
 
-    number_of_retries = "a"
-		initial_delay = 3
+    @exponential_backoff.max_retries = "a"
 
-    proc {  @exponential_backoff.start(number_of_retries,initial_delay) }.must_raise ArgumentError
+    proc {  @exponential_backoff.start() }.must_raise ArgumentError
 
   end
 
   it 'Should raise argument error if initial_delay is not numeric' do
 
-    number_of_retries = 3
-    initial_delay = "b"
+    @exponential_backoff.initial_delay = "a"
 
-    proc {  @exponential_backoff.start(number_of_retries,initial_delay) }.must_raise ArgumentError
+    proc {  @exponential_backoff.start() }.must_raise ArgumentError
 
   end
 
