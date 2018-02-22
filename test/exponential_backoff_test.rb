@@ -24,8 +24,6 @@ describe "ExponentialBackOffTest" do
 
   describe "verify_input" do
 
-    
-
     it 'Should raise ArgumentError if url is blank' do
       
       @exponential_backoff.url = ""
@@ -96,6 +94,15 @@ describe "ExponentialBackOffTest" do
 
       proc {  @exponential_backoff.request_url_with_timeout(url,delayInSeconds) }.must_raise OpenURI::HTTPError
 
+    end
+
+    it 'Should return a response if request has status code of 200 and delay is not exceeded' do
+      
+      url = "https://httpbin.org/delay/3"
+
+      delayInSeconds = 4
+
+      @exponential_backoff.request_url_with_timeout(url,delayInSeconds).wont_be_empty
     end
     
   end
