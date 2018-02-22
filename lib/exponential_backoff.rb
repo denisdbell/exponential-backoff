@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'timeout'
 require 'uri'
+require 'colorize'
 
 class ExponentialBackOff
 
@@ -24,16 +25,22 @@ class ExponentialBackOff
     
       verify_input
 
+      puts "\n\n==================================================================================================================================".yellow
+      puts " URL : #{@@url} ," + " Maximum Retries: ".yellow + " #{@@max_retries}, \n\n Initial Delay : #{@@initial_delay}, Delay Multipier :  #{@@delay_multiplier}  \n"
+      puts "================================================================================================================================== \n".yellow
+
     begin
 
-      request_url_with_timeout(@@url,@@current_delay)
 
+      request_url_with_timeout(@@url,@@current_delay)
+      
     rescue Timeout::Error => e
+
+      puts "[FAILURE] => Request to url  #{@@url} failed with delay of #{@@current_delay} seconds"
 
       if  @@current_retries <= @@max_retries
           @@current_retries += 1
           @@current_delay = generate_delay( @@current_delay, @@delay_multiplier)
-          puts @@current_delay
           retry
       else
         raise "Timeout: #{e.message}"
@@ -69,9 +76,11 @@ class ExponentialBackOff
       end
     }
 
-    #Return response only if there is a 2XX or success status code 
+    #Return response only if there is a 2XX status code 
     if status[0].to_i >= 200 && status[0].to_i < 300
-    
+      
+      puts "[SUCCESS] => Request to url #{@@url} succeeded with a delay of #{delay} seconds"
+
       return response
     
     else
