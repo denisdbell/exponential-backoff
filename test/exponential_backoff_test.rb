@@ -10,7 +10,26 @@ describe "ExponentialBackOffTest" do
   describe "verify_input" do
 
     before do
-      @exponential_backoff = ExponentialBackOff.new("https://httpbin.org/delay/3",4,1,2);
+      set_default_backoff_object
+    end
+
+    def set_default_backoff_object
+
+      url = "https://httpbin.org/delay/3"
+      max_retries = 4
+      initial_delay = 1
+      delay_multiplier = 2
+
+      @exponential_backoff =  ExponentialBackOff.new(url,max_retries, initial_delay, delay_multiplier);
+    
+    end
+
+    it 'Should raise ArgumentError if url is in a invalid format' do
+      
+      @exponential_backoff.url = "invlaidurl..com"
+
+      proc { @exponential_backoff.start() }.must_raise ArgumentError
+    
     end
 
     it 'Should raise ArgumentError if max_retries is negative' do
