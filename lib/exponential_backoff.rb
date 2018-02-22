@@ -32,7 +32,7 @@ class ExponentialBackOff
 
       if  @@current_retries <= @@max_retries
           @@current_retries += 1
-          @@current_delay =  @@current_delay * @@delay_multiplier
+          @@current_delay = generate_delay( @@current_delay, @@delay_multiplier)
           puts @@current_delay
           retry
       else
@@ -79,6 +79,20 @@ class ExponentialBackOff
       raise "Url request failed. Status code of: #{status[0].to_i } returned"
     
     end
+
+  end
+
+  def generate_delay(current_delay,delay_multiplier)
+
+    raise ArgumentError, 'Value of current_delay cannot be negative. Valid values are positive  integers between 1 to N' unless current_delay >= 0
+    	
+		raise ArgumentError, 'Value of number of current_delay is not numeric. Valid values are postive integers between 1 to N' unless current_delay.is_a? Numeric  
+    
+    raise ArgumentError, 'Value of delay_multiplier cannot be negative. Valid values are positive  integers between 1 to N' unless delay_multiplier >= 0
+    	
+		raise ArgumentError, 'Value of number of delay_multiplier is not numeric. Valid values are postive integers between 1 to N' unless delay_multiplier.is_a? Numeric  
+    
+    return current_delay * delay_multiplier
 
   end
 
