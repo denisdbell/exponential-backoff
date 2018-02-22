@@ -45,6 +45,8 @@ class ExponentialBackOff
 
   def verify_input
 
+    raise ArgumentError, 'Value of url is cannot be blank. Format should be like the folllowing http://www.example.com' unless  @@url.empty? == false
+
     raise ArgumentError, 'Value of url is not valid. Format should be like the folllowing http://www.example.com' unless @@url =~ URI::regexp  
 
     raise ArgumentError, 'Value of number of retries cannot be negative. Valid values are postive integers between 0 to N' unless @@max_retries >= 0  
