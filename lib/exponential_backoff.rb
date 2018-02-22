@@ -21,19 +21,11 @@ class ExponentialBackOff
 
   def start() 
     
-		raise ArgumentError, 'Value of number of retries cannot be negative. Valid values are postive integers between 0 to N' unless @@max_retries >= 0  
-		
-    raise ArgumentError, 'Value Of Initial delay cannot be negative. Valid values are positive  integers between 1 to N' unless @@initial_delay >= 0
-		
-		raise ArgumentError, 'Value of number of retries is not numeric. Valid values are postive integers between 0 to N' unless @@max_retries.is_a? Numeric  
-	   	
-	  raise ArgumentError, 'Value of initial delay is not numeric. Valid values are postive integers between 1 to N' unless @@initial_delay.is_a? Numeric       
+      verify_input
 
     begin
 
-      @@response = Timeout::timeout(@@current_delay) {
-        open(@@url).read
-      }
+      request_url_with_timeout(@@url,@@current_delay)
 
     rescue Timeout::Error => e
 
@@ -45,6 +37,42 @@ class ExponentialBackOff
       else
         raise "Timeout: #{e.message}"
       end
+
+    end
+
+  end
+
+  def verify_input
+
+    raise ArgumentError, 'Value of number of retries cannot be negative. Valid values are postive integers between 0 to N' unless @@max_retries >= 0  
+		
+    raise ArgumentError, 'Value of initial delay cannot be negative. Valid values are positive  integers between 1 to N' unless @@initial_delay >= 0
+		
+		raise ArgumentError, 'Value of number of retries is not numeric. Valid values are postive integers between 0 to N' unless @@max_retries.is_a? Numeric  
+	   	
+	  raise ArgumentError, 'Value of initial delay is not numeric. Valid values are postive integers between 1 to N' unless @@initial_delay.is_a? Numeric       
+
+  end
+
+  def request_url_with_timeout(url,delay)
+
+    status = ""
+
+    response = Timeout::timeout(delay) {
+      open(url) do |f|
+        status = f.status
+      end
+    }
+
+    #Return response only if there is a 2XX or success status code 
+    if status[0].to_i >= 200 && status[0].to_i < 300
+    
+      return response
+    
+    else
+      
+      raise "Url request failed. Status code of: #{status[0].to_i } returned"
+    
     end
 
   end
