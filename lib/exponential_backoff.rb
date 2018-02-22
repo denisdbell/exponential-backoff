@@ -18,7 +18,7 @@ class ExponentialBackOff
       @@delay_multiplier = delay_multiplier
       @@current_delay = @@initial_delay
   end
-  
+
   def start() 
     
 		raise ArgumentError, 'Value of number of retries cannot be negative. Valid values are postive integers between 0 to N' unless @@max_retries >= 0  
@@ -46,7 +46,64 @@ class ExponentialBackOff
         raise "Timeout: #{e.message}"
       end
     end
-    
+
+  end
+
+  #Getters and Setters
+  def response=(response)
+    @@response = response
+  end
+
+  def response
+    @@response
+  end
+
+  def max_retries
+    @@max_retries
+  end
+
+  def max_retries=(max_retries)
+    @@max_retries = max_retries
+  end
+
+  def initial_delay
+    @@max_retries
+  end
+
+  def initial_delay=(initial_delay)
+    @@initial_delay = initial_delay
+  end
+
+  def current_delay
+    @@current_delay
+  end
+
+  def current_delay=(current_delay)
+    @@current_delay = current_delay
+  end
+
+  def delay_multiplier
+    @@delay_multiplier
+  end
+
+  def delay_multiplier=(delay_multiplier)
+    @@delay_multiplier = delay_multiplier
+  end
+
+  def current_retries
+    @@current_retries
+  end
+
+  def current_retries=(current_retries)
+    @@current_retries = current_retries
+  end
+
+  def delay_multiplier
+    @@delay_multiplier
+  end
+
+  def delay_multiplier=(delay_multiplier)
+    @@delay_multiplier = delay_multiplier
   end
   
 end
