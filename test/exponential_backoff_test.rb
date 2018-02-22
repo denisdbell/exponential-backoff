@@ -7,40 +7,72 @@ require 'exponential_backoff.rb'
 
 describe "ExponentialBackOffTest" do
 
-  before do
-    @exponential_backoff = ExponentialBackOff.new("https://httpbin.org/delay/3",4,1,2);
-  end
+  describe "verify_input" do
 
-  it 'Should raise ArgumentError if max_retries is negative' do
+    before do
+      @exponential_backoff = ExponentialBackOff.new("https://httpbin.org/delay/3",4,1,2);
+    end
+
+    it 'Should raise ArgumentError if max_retries is negative' do
+      
+      @exponential_backoff.max_retries = -1
+
+      proc { @exponential_backoff.start() }.must_raise ArgumentError
     
-    @exponential_backoff.max_retries = -1
+    end
 
-    proc { @exponential_backoff.start() }.must_raise ArgumentError
+    it 'Should raise ArgumentError if initial_delay is negative' do
+      
+      @exponential_backoff.initial_delay = -1
+      
+      proc { @exponential_backoff.start() }.must_raise ArgumentError
+    
+    end
+
+    it 'Should raise ArgumentError if max_retries not numeric' do
+
+      @exponential_backoff.max_retries = "a"
+
+      proc {  @exponential_backoff.start() }.must_raise ArgumentError
+
+    end
+
+    it 'Should raise argument error if initial_delay is not numeric' do
+
+      @exponential_backoff.initial_delay = "a"
+
+      proc {  @exponential_backoff.start() }.must_raise ArgumentError
+
+    end
   
   end
 
-  it 'Should raise ArgumentError if initial_delay is negative' do
+  describe "request_url_with_timeout" do
+
+    before do
+      @exponential_backoff = ExponentialBackOff.new("https://httpbin.org/delay/3",4,1,2);
+    end
+
+    it 'Should raise Timeout::Error error if request is not completed in the time specified' do
+      
+      url = "https://httpbin.org/delay/3"
+
+      delayInSeconds = 1
+
+      proc {  @exponential_backoff.request_url_with_timeout(url,delayInSeconds) }.must_raise Timeout::Error
+
+    end
+
+    it 'Should raise Timeout::Error error if request does not return success status code' do
+      
+      url = "https://httpbin.org/status/400"
+
+      delayInSeconds = 1
+
+      proc {  @exponential_backoff.request_url_with_timeout(url,delayInSeconds) }.must_raise OpenURI::HTTPError
+
+    end
     
-    @exponential_backoff.initial_delay = -1
-    
-    proc { @exponential_backoff.start() }.must_raise ArgumentError
-  
-  end
-
-  it 'Should raise ArgumentError if max_retries not numeric' do
-
-    @exponential_backoff.max_retries = "a"
-
-    proc {  @exponential_backoff.start() }.must_raise ArgumentError
-
-  end
-
-  it 'Should raise argument error if initial_delay is not numeric' do
-
-    @exponential_backoff.initial_delay = "a"
-
-    proc {  @exponential_backoff.start() }.must_raise ArgumentError
-
   end
 
 end
