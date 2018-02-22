@@ -1,49 +1,52 @@
-#require "exponential_backoff/version"
-require 'securerandom'
 require 'open-uri'
 require 'timeout'
 
 class ExponentialBackOff
-  
-  def start(url,number_of_retries,initial_delay) 
-    
-    retries = 0
-    delay = 1
 
-		raise ArgumentError, 'Value of number of retries cannot be negative. Valid values are postive integers between 0 to N' unless number_of_retries >= 0  
+  @@url = ""
+  @@response = ""
+  @@max_retries = 0
+  @@initial_delay = 0
+  @@current_delay = 0
+  @@current_retries = 0
+  @@delay_multiplier = 0
+
+  def initialize(url,max_retries, initial_delay, delay_multiplier)
+      @@url = url  
+      @@max_retries = max_retries
+      @@initial_delay = initial_delay
+      @@delay_multiplier = delay_multiplier
+      @@current_delay = @@initial_delay
+  end
+  
+  def start() 
+    
+		raise ArgumentError, 'Value of number of retries cannot be negative. Valid values are postive integers between 0 to N' unless @@max_retries >= 0  
 		
-    raise ArgumentError, 'Value Of Initial delay cannot be negative. Valid values are positive  integers between 1 to N' unless initial_delay >= 0
+    raise ArgumentError, 'Value Of Initial delay cannot be negative. Valid values are positive  integers between 1 to N' unless @@initial_delay >= 0
 		
-		raise ArgumentError, 'Value of number of retries is not numeric. Valid values are postive integers between 0 to N' unless number_of_retries.is_a? Numeric  
+		raise ArgumentError, 'Value of number of retries is not numeric. Valid values are postive integers between 0 to N' unless @@max_retries.is_a? Numeric  
 	   	
-	  raise ArgumentError, 'Value of initial delay is not numeric. Valid values are postive integers between 1 to N' unless initial_delay.is_a? Numeric       
+	  raise ArgumentError, 'Value of initial delay is not numeric. Valid values are postive integers between 1 to N' unless @@initial_delay.is_a? Numeric       
 
     begin
 
-      response = Timeout::timeout(delay) {
-        open(url).read
+      @@response = Timeout::timeout(@@current_delay) {
+        open(@@url).read
       }
-      
-      puts response
-
-      if response.nil?
-        puts "There is no object"
-      end
 
     rescue Timeout::Error => e
 
-      if retries <= number_of_retries
-        retries += 1
-        delay = delay * 2
-
-        puts delay
-        retry
+      if  @@current_retries <= @@max_retries
+          @@current_retries += 1
+          @@current_delay =  @@current_delay * @@delay_multiplier
+          puts @@current_delay
+          retry
       else
         raise "Timeout: #{e.message}"
       end
     end
-
-
+    
   end
   
 end
