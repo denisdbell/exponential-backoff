@@ -25,9 +25,15 @@ class ExponentialBackOff
     
       verify_input
 
-      puts "\n\n==================================================================================================================================".yellow
-      puts " URL : #{@@url} ," + " Maximum Retries: ".yellow + " #{@@max_retries}, \n\n Initial Delay : #{@@initial_delay}, Delay Multipier :  #{@@delay_multiplier}  \n"
-      puts "================================================================================================================================== \n".yellow
+      puts "\nExponential BackOff Program ".yellow + "( written in Ruby )".light_blue
+      puts "Author:".yellow    + "  Denis Bell".light_blue
+      puts "Date:    ".yellow  + "2018-02-22".light_blue
+      puts "Email:   " .yellow + "denisdbell@gmail.com".light_blue
+      puts "Company: Sticker Mule".yellow + " - https://www.stickermule.com/".light_blue
+
+      puts "\n\n===================================================================================".yellow
+      puts " URL :".green  + " #{@@url} " + " Maximum Retries: ".green + " #{@@max_retries} \n\n" + " Initial Delay : ".green + "#{@@initial_delay}" + "                  Delay Multipier : ".green + "#{@@delay_multiplier}  \n"
+      puts "===================================================================================\n".yellow
 
     begin
 
@@ -36,7 +42,7 @@ class ExponentialBackOff
       
     rescue Timeout::Error => e
 
-      puts "[FAILURE] => Request to url  #{@@url} failed with delay of #{@@current_delay} seconds"
+      puts "[FAILURE] x".red + " Request to url #{@@url} failed with delay of #{@@current_delay} seconds"
 
       if  @@current_retries <= @@max_retries
           @@current_retries += 1
@@ -79,7 +85,7 @@ class ExponentialBackOff
     #Return response only if there is a 2XX status code 
     if status[0].to_i >= 200 && status[0].to_i < 300
       
-      puts "[SUCCESS] => Request to url #{@@url} succeeded with a delay of #{delay} seconds"
+      puts "[SUCCESS] \u2713".green + " Request to url #{@@url} succeeded with a delay of #{delay} seconds "
 
       return response
     
