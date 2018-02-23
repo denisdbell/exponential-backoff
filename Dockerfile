@@ -12,5 +12,4 @@ WORKDIR /usr/app/
 
 RUN bundle install
 
-CMD ["ruby", "lib/start_back_off.rb"]
-
+ENTRYPOINT ["ruby", "lib/start_back_off.rb"]
