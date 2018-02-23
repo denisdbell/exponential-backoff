@@ -29,7 +29,7 @@ class ExponentialBackOff
       puts "Author:".yellow    + "  Denis Bell".light_blue
       puts "Date:    ".yellow  + "2018-02-22".light_blue
       puts "Email:   " .yellow + "denisdbell@gmail.com".light_blue
-      puts "Company: Sticker Mule".yellow + " - https://www.stickermule.com/".light_blue
+      puts "Company: ".yellow  + "Sticker Mule - https://www.stickermule.com/".light_blue
 
       puts "\n\n===================================================================================".yellow
       puts " URL :".green  + " #{@@url} " + " Maximum Retries: ".green + " #{@@max_retries} \n\n" + " Initial Delay : ".green + "#{@@initial_delay}" + "                  Delay Multipier : ".green + "#{@@delay_multiplier}  \n"
