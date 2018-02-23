@@ -10,7 +10,7 @@ class ExponentialBackOff
   @@max_retries = 0
   @@initial_delay = 0
   @@current_delay = 0
-  @@current_retries = 0
+  @@current_retries = 1
   @@delay_multiplier = 0
 
   def initialize(url,max_retries, initial_delay, delay_multiplier)
@@ -37,18 +37,17 @@ class ExponentialBackOff
 
     begin
 
+      @@current_retries += 1
+
       request_url_with_timeout(@@url,@@current_delay)
       
     rescue Timeout::Error => e
 
       puts "[FAILURE] x".red + " Request to url #{@@url} failed with a delay of #{@@current_delay} seconds"
-
+      
       if  @@current_retries <= @@max_retries
-          @@current_retries += 1
           @@current_delay = generate_delay(@@current_delay, @@delay_multiplier)
           retry
-      else
-        raise "Timeout: #{e.message}"
       end
 
     end
