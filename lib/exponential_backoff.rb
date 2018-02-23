@@ -32,7 +32,7 @@ class ExponentialBackOff
       puts "Company: ".yellow  + "Sticker Mule - https://www.stickermule.com/".light_blue
 
       puts "\n\n===================================================================================".yellow
-      puts " URL :".green  + " #{@@url} " + " Maximum Retries: ".green + " #{@@max_retries} \n\n" + " Initial Delay : ".green + "#{@@initial_delay}" + "                  Delay Multipier : ".green + "#{@@delay_multiplier}  \n"
+      puts " URL :".green  + " #{@@url} " + " Maximum Retries: ".green + " #{@@max_retries} \n\n" + " Initial Delay : ".green + "#{@@initial_delay}" + "                  Delay Multiplier : ".green + "#{@@delay_multiplier}  \n"
       puts "===================================================================================\n".yellow
 
     begin
