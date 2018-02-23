@@ -45,7 +45,7 @@ class ExponentialBackOff
 
       if  @@current_retries <= @@max_retries
           @@current_retries += 1
-          @@current_delay = generate_delay( @@current_delay, @@delay_multiplier)
+          @@current_delay = generate_delay(@@current_delay, @@delay_multiplier)
           retry
       else
         raise "Timeout: #{e.message}"
