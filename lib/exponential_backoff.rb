@@ -37,12 +37,11 @@ class ExponentialBackOff
 
     begin
 
-
       request_url_with_timeout(@@url,@@current_delay)
       
     rescue Timeout::Error => e
 
-      puts "[FAILURE] x".red + " Request to url #{@@url} failed with delay of #{@@current_delay} seconds"
+      puts "[FAILURE] x".red + " Request to url #{@@url} failed with a delay of #{@@current_delay} seconds"
 
       if  @@current_retries <= @@max_retries
           @@current_retries += 1
