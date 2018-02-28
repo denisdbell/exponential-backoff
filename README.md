@@ -1,41 +1,137 @@
-# ExponentialBackoff
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/exponential_backoff`. To experiment with that code, run `bin/console` for an interactive prompt.
+# Exponential Back Off
 
-TODO: Delete this and the text above, and describe your gem
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'exponential_backoff'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install exponential_backoff
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/exponential_backoff. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+# Application
 
 
-## License
+## Overview
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+This is a ruby based application which implements the exponential back
+off algorithm. Exponential back off is a standard error handling strategy
+for network applications in which a client periodically retries a failed
+request with increasing delays between requests.
 
+## Executing The Application
+
+The instructions below describes the various methods which can be used
+to execute the application:
+
+### Run using the “docker run” command
+
+To execute the application using docker run, type the following command
+in your terminal:
+
+    docker ​run​ -t denisdbell/backoff:1.
+
+You should see the following output displayed to stdout:
+As shown above, the application is executed with default values for the
+following variables:
+
+1. **URL** ​ - This is the url which will be requested by the application. The
+    default value is ​ ​ **https://httpbin.org/delay/3** ​.
+2. **Maximum Retries** ​ - This variable represents the amount of times
+    the specified URL will be requested. The default value is ​ **3** ​.
+3. **Initial Delay** ​ - This is the delay in seconds that will be used to make
+    the initial request to the specified url. The default value is ​ **1** ​ second.
+4. **Delay Multiplier** ​ - This variable is used to exponentially increase
+    the delay value each time a failed request is made. The default
+    value is ​ **2** ​.
+
+
+The value of the above variables can be easily changed by passing new
+values to the ​ **docker run** ​command, see an example below:
+docker run -t denisdbell/backoff:1.
+
+    > https://httpbin.org/delay/5 \ ​#URL
+    > 4 \ ​#Maximum Retries
+    > 2 \ ​#Initial Delay
+    > 3 \ ​#Delay Multiplier
+
+Individual parameters can also be set. In the following example only the
+**url** ​ is set:
+
+    docker ​run​ -t denisdbell/backoff:​1.
+    https:​//httpbin.org/delay/
+
+> **Note:** ​ Parameters which are not set will use their default values.
+
+
+### Run using “docker-compose”
+
+The ​ **docker-compose.yml** ​ file is located in the root directory of the
+project. It contains the configuration needed to execute the application.
+
+    version: '3'
+    services:
+	    backoff:
+		    build:.
+		    image: denisdbell/backoff:1.
+
+Navigate to the root directory of the application and type the following
+command to launch the application:
+docker-compose ​up
+You should see the following output displayed to stdout:
+
+
+### Run using ruby
+
+To execute the application using ruby, navigate to the root directory of
+the application and install the dependencies using the following
+command:
+
+    bundle​ install
+
+Now run the application using the following command:
+
+    ruby​ lib/start_back_off.rb
+
+## Building And Pushing The Docker Image
+
+When making modifications to the code for example bug fixes,
+enhancements etc, the docker image will need to be rebuilt and pushed
+to the docker hub repository. The ​ **Dockerfile,** ​ located in the root of the
+project directory, contains the information required to build the image.
+See the Dockerfile details below:
+
+    FROM​ ruby:​2.5​-alpine3.​ 7
+    MAINTAINER​ Denis Bell <denisdbell@gmail.com>
+    RUN​ apk add --no-cache git
+    RUN​ mkdir /usr/app
+    COPY​. /usr/app
+    WORKDIR​ /usr/app/
+    RUN​ bundle install
+    ENTRYPOINT​ [​"ruby"​, ​"lib/start_back_off.rb"​]
+
+
+The image can be built using the ​ **docker build** ​ or ​ **docker-compose build**
+commands. Both methods are shown below:
+
+### Building the image using the “docker build” command
+
+Navigate to the root directory of the project and execute the following
+command to build the ​ **backoff** ​ image:
+
+    docker build. -t ​<​ **docker hub** ​ ​ **username>** ​/backoff:​<​ **version** ​>
+
+After the build process is complete. Push the image to the docker hub
+repository by using the following command:
+
+    docker push ​<​ **docker** ​ hub username>​/backoff:​<​ **version** ​>
+
+### Building the image using “docker-compose”
+
+Docker compose is the prefered method to build images because of its
+simplicity. Navigate to the root directory of the project and run the
+following command to build the ​ **backoff** ​ image:
+
+    docker-compose build
+
+> **Note:** ​ Image name and version can changed in docker-compose.yml file
+
+
+After the build process is complete. Push the image to the docker hub
+repository using the following command:
+
+    docker-compose push
+
+Thanks for reading, Happy Coding!
